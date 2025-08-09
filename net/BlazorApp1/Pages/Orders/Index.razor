@@ -1,0 +1,97 @@
+﻿@using System.Net.Http.Headers
+@using Newtonsoft.Json
+
+
+@page "/Orders/Index"
+
+<h1>Consulta de Ordenes de Pedido</h1>
+
+<div class="col-md-6">
+    
+        <a class="btn btn-light" style="font-size:12px"
+           href="/Orders/Create">Crear Registro</a>
+
+</div>
+
+<div class="container">
+    <div class="col-md-12">
+        @if (orderPedidos == null)
+        {
+            <span>CARGANDO DATS DE CONSULTA</span>
+        }
+        else if(orderPedidos.Count == 0)
+        {
+            <span>NO EXISTEN REGISTROS</span>
+        }
+        else
+        {
+            <table class="table">
+                <tr>
+                    <th>Num.Order</th>
+                    <th>Cod.Tienda</th>
+                    <th>Tienda</th>
+                    <th>Fecha</th>
+                    <th></th>
+                </tr>
+
+                @foreach (var itemmodel in orderPedidos)
+                {
+                    <tr>
+                        <td>
+                            <label>@itemmodel.IdOrderCab</label>
+                        </td>
+                        <td>
+                            <label>@itemmodel.CodTienda</label>
+                        </td>
+                        <td>
+                            <label>@itemmodel.Tienda</label>
+                        </td>
+                        <td>
+                            <label>@itemmodel.FechaIngreso</label>
+                        </td>
+                        <td>
+                            <a class="form-label" style="font-size:12px"
+                               href="/Orders/Details/@itemmodel.IdOrderCab">@itemmodel.IdOrderCab</a>
+                        </td>
+                    </tr>
+                }
+
+            </table>
+        }
+    </div>
+ </div>
+
+
+
+@code {
+
+    public List<Models.OrderPedido>? orderPedidos { get; set; }
+    string BaseURL = "http://localhost:52958/";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CargaDatos();
+    }
+
+    private async Task CargaDatos()
+    {
+        using(var client = new HttpClient())
+        {
+            client.BaseAddress = new Uri(BaseURL);
+            client.DefaultRequestHeaders.Clear();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("applications/json"));
+
+            HttpResponseMessage res = await client.GetAsync("api/Orders/ordenes");
+
+            if (res.IsSuccessStatusCode)
+            {
+                var response = res.Content.ReadAsStringAsync().Result;
+
+                //desarializo json a lista
+                orderPedidos = JsonConvert.DeserializeObject<List<Models.OrderPedido>>(response);
+
+            }
+        }
+    }
+
+}

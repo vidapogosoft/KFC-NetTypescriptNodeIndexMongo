@@ -1,0 +1,102 @@
+﻿@using System.Net.Http.Headers
+@using Newtonsoft.Json
+@using System.Text
+
+@page "/Orders/Create"
+
+<h3>Create</h3>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <label>Cod.Tienda:</label>
+        <input type="text" placeholder="Ingrese cod" @bind="codtienda" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <label>Tienda:</label>
+        <input type="text" placeholder="Ingrese Tienda" @bind="tienda" />
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-12">
+        <label>Observacion:</label>
+        <input type="text" placeholder="Ingrese observ" @bind="observ" />
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        <button class="btn btn-primary" @onclick="@(() => Submit(codtienda, tienda, observ))">Guardar Datos</button>
+    </div>
+</div>
+
+@code {
+
+    public string BaseURL = "http://localhost:52958/";
+
+    public string? codtienda;
+    public string? tienda;
+    public string? observ;
+
+    private async Task Submit(string codtienda, string tienda, string observ)
+    {
+
+        var newitem = new Models.OrderPedido
+        {
+                IdOrderCab = 0,
+                FechaIngreso = DateTime.Now,
+                UsuarioIngreso = "Blazor",
+                CodTienda = codtienda,
+                Tienda = tienda,
+                Observacion = observ
+        };
+
+        await GrabarDatos(newitem);
+
+    }
+
+    private async Task GrabarDatos(Models.OrderPedido item)
+    {
+        try
+        {
+
+            item.FechaIngreso = DateTime.Now;
+            item.UsuarioIngreso = "FRONT";
+
+            using (var client = new HttpClient())
+            {
+                //call api backend
+                client.BaseAddress = new Uri(BaseURL);
+                client.DefaultRequestHeaders.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+                var json = JsonConvert.SerializeObject(item);
+
+                Console.WriteLine(json);
+
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage res = client.PostAsync("api/Orders/guaradarorder/", content).GetAwaiter().GetResult();
+
+                if (res.IsSuccessStatusCode)
+                {
+                    var response = res.Content.ReadAsStringAsync().Result;
+                    Console.WriteLine(response.ToString());
+                }
+
+            }
+
+
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+}

@@ -1,0 +1,14 @@
+<p> Actividad:
+  <input type="text" [formControl]="actividad">
+</p>
+<p><button (click)="agregar()">Agregar</button></p>
+<ol>
+  @for(acti of lista;track $index) {
+  <li>
+    {{acti}} <a (click)="borrar($index)" href="#">Borra?</a>
+  </li>
+  }
+</ol>
+<p><button (click)="borrarTodas()">Borrar todas las actividades</button></p>
+
+<router-outlet />

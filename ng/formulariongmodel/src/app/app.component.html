@@ -1,0 +1,50 @@
+<div>
+    <h1>ADMIN DE PRODUCTOS</h1>
+
+    @if(hayRegistros()){
+      <table>
+        <thead>
+          <tr>
+            <th>Codigo</th>
+          <th>Descripcion</th>
+          <th>Precio</th>
+          <th></th>
+          <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for(art of productos; track art.codigo){
+
+            <tr>
+              <td>{{art.codigo}}</td>
+              <td>{{art.descripcion}}</td>
+              <td>{{art.precio}}</td>
+              <td><button (click)="borrar(art.codigo)" style="background-color: red;" >Delete</button></td>
+              <td><button (click)="seleccionar(art)" style="background-color: blue;" >Seleccionar</button></td>
+            </tr>
+
+          }
+        </tbody>
+      </table>
+    }@else {
+      <p>No Existen Productos</p>
+    }
+
+    <div>
+      <p>
+        Codigo: <input type="number" [(ngModel)] = "art.codigo"  />
+      </p>
+       <p>
+        Descripcion: <input type="text" [(ngModel)] = "art.descripcion"  />
+      </p>
+       <p>
+        Precio: <input type="number" [(ngModel)] = "art.precio"  />
+      </p>
+      <p>
+        <button (click)="agregar()" style="background-color: aqua;" >Agregar</button>
+        <button (click)="modificar()" style="background-color: yellow;" >Modificar</button>
+      </p>
+    </div>
+
+</div>
+<router-outlet></router-outlet>

@@ -1,0 +1,20 @@
+<div class="container">
+  <h1>{{title}}</h1>
+
+  <div class="add-todo-section">
+      <input type="text" [(ngModel)]="newTodoText"  placeholder="Nueva Tarea" (keyup.enter)="addTodo()" />
+      <button (click)="addTodo()" >Registrar Tarea</button>
+  </div>
+
+  <ul class="todo-list">
+    <li *ngIf="todos.length === 0" class="no-todos"> No hay Tareas registradas</li>
+    <li *ngFor="let todo of todos" [class.completed] = "todo.completed">
+      <span (click)="toggleCompleted(todo)">
+        {{todo.text}}
+      </span>
+      <button (click)="deleteTodo(todo.id)"  >Eliminar</button>
+    </li>
+  </ul>
+
+</div>
+<router-outlet />
